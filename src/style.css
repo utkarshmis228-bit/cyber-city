@@ -366,4 +366,59 @@ code {
   font-weight: bold;
   cursor: pointer;
 }
+#mobile-controls {
+  position: fixed;
+  bottom: 24px;
+  left: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  touch-action: none;
+}
 
+#mobile-controls div {
+  display: flex;
+  gap: 8px;
+}
+
+#mobile-controls button {
+  width: 58px;
+  height: 58px;
+  border: 2px solid #00f0ff;
+  border-radius: 14px;
+  background: rgba(0, 20, 45, 0.8);
+  color: #00f0ff;
+  font-size: 24px;
+  font-weight: bold;
+  touch-action: none;
+  user-select: none;
+}#joystick {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 140px;
+  border: 2px solid #00f0ff;
+  border-radius: 50%;
+  background: rgba(0, 30, 60, 0.55);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3),
+              inset 0 0 18px rgba(0, 240, 255, 0.15);
+  z-index: 99999;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#joystick-knob {
+  width: 54px;
+  height: 54px;
+  border: 2px solid #8affff;
+  border-radius: 50%;
+  background: rgba(0, 220, 255, 0.55);
+  box-shadow: 0 0 15px #00d9ff;
+  pointer-events: none;
+}

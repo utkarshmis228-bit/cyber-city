@@ -341,7 +341,59 @@ window.addEventListener('keydown', e => {
   }
 })
 window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false)
+// Mobile circular joystick
+const joystick = document.createElement('div')
+joystick.id = 'joystick'
+joystick.innerHTML = '<div id="joystick-knob"></div>'
+document.body.appendChild(joystick)
 
+const knob = document.getElementById('joystick-knob')
+const directions = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
+let joystickPointer = null
+
+function moveJoystick(e) {
+  const rect = joystick.getBoundingClientRect()
+  const cx = rect.left + rect.width / 2
+  const cy = rect.top + rect.height / 2
+  let dx = e.clientX - cx
+  let dy = e.clientY - cy
+
+  const max = 38
+  const distance = Math.hypot(dx, dy)
+  if (distance > max) {
+    dx = dx / distance * max
+    dy = dy / distance * max
+  }
+
+  knob.style.transform = `translate(${dx}px, ${dy}px)`
+
+  directions.forEach(key => keys[key] = false)
+
+  if (Math.abs(dx) > 9)
+    keys[dx < 0 ? 'arrowleft' : 'arrowright'] = true
+  if (Math.abs(dy) > 9)
+    keys[dy < 0 ? 'arrowup' : 'arrowdown'] = true
+}
+
+function resetJoystick() {
+  joystickPointer = null
+  directions.forEach(key => keys[key] = false)
+  knob.style.transform = 'translate(0px, 0px)'
+}
+
+joystick.addEventListener('pointerdown', e => {
+  e.preventDefault()
+  joystickPointer = e.pointerId
+  joystick.setPointerCapture(e.pointerId)
+  moveJoystick(e)
+})
+
+joystick.addEventListener('pointermove', e => {
+  if (e.pointerId === joystickPointer) moveJoystick(e)
+})
+
+joystick.addEventListener('pointerup', resetJoystick)
+joystick.addEventListener('pointercancel', resetJoystick)
 const hud = document.createElement('div')
 hud.id = 'hud'
 hud.innerHTML = '<b>CYBER CITY</b><span>NEON RUNNER</span><p>WASD / ARROWS — MOVE</p><p id="score">ENERGY: 0 / 8</p>'
