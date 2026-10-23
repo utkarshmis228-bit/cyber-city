@@ -421,4 +421,29 @@ code {
   background: rgba(0, 220, 255, 0.55);
   box-shadow: 0 0 15px #00d9ff;
   pointer-events: none;
+}html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+body > canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+#app {
+  position: relative;
+  z-index: 1;
 }
