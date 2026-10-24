@@ -447,3 +447,15 @@ body > canvas {
   position: relative;
   z-index: 1;
 }
+#city-safe img {
+  width: 100px;
+  height: 100px;
+}
+
+#game-over img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  display: block;
+  margin: 8px auto;
+}
