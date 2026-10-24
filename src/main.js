@@ -46,6 +46,7 @@ const gameOverScreen = document.createElement('div')
 gameOverScreen.id = 'game-over'
 gameOverScreen.innerHTML = `
   <h1>GAME OVER</h1>
+  <img src="./utkarshh.jpg" alt="Utkarsh">
   <p>You crashed into an obstacle!</p>
   <button id="restart-btn">PLAY AGAIN</button>
 `
@@ -55,6 +56,7 @@ const citySafeScreen = document.createElement('div')
 citySafeScreen.id = 'city-safe'
 citySafeScreen.innerHTML = `
   <h1>🌆 CITY RESTORED!</h1>
+  <img src="./utkarsh.jpg" alt="Utkarsh" class="winner-photo">
   <p>MISSION COMPLETE</p>
   <p>All 8 energy rings collected.</p>
   <button id="city-restart-btn">PLAY AGAIN</button>
