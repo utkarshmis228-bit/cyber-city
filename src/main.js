@@ -41,7 +41,41 @@ const bloomPass = new UnrealBloomPass(
 
 composer.addPass(bloomPass)
 composer.addPass(new OutputPass())
+// CYBER CITY - Custom audio files
+const bgMusic = new Audio('/cyber-city/bg-music.mp3')
+bgMusic.loop = true
+bgMusic.volume = 0.35
 
+const ringAudio = new Audio('/cyber-city/ring.mp3')
+const crashAudio = new Audio('/cyber-city/crash.mp3')
+const gameOverAudio = new Audio('/cyber-city/gameover.mp3')
+
+function playAudio(audio) {
+  audio.currentTime = 0
+  audio.play().catch(error => {
+    console.log('Audio playback blocked:', error)
+  })
+}
+
+function startBackgroundMusic() {
+  if (bgMusic.paused) {
+    bgMusic.play().catch(error => {
+      console.log('Background music needs user interaction.')
+    })
+  }
+}
+
+function playRingSound() {
+  playAudio(ringAudio)
+}
+
+function playCrashSound() {
+  playAudio(crashAudio)
+}
+
+function playGameOverSound() {
+  playAudio(gameOverAudio)
+}
 const gameOverScreen = document.createElement('div')
 gameOverScreen.id = 'game-over'
 gameOverScreen.innerHTML = `
@@ -338,6 +372,7 @@ let score = 0
 let gameover = false
 window.addEventListener('keydown', e => {
   keys[e.key.toLowerCase()] = true
+  startBackgroundMusic()
   if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
     e.preventDefault()
   }
@@ -460,12 +495,15 @@ if (gameover) {
     ring.rotation.y += dt * 1.5
     if (ring.visible && player.position.distanceTo(ring.position) < 3.0) {
       ring.visible = false
+      playRingSound()
       score++
       document.getElementById('score').textContent = `ENERGY: ${score} / 8`
       
 if (score === 8) {
   document.getElementById('score').textContent = 'CITY RESTORED! 🎉'
+  playCrashSound()
   gameover = true
+  playVictorySound()
   citySafeScreen.style.display = 'flex'
 }
 
