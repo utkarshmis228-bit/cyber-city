@@ -48,6 +48,7 @@ bgMusic.volume = 0.35
 
 const ringAudio = new Audio('/cyber-city/ring.mp3')
 const crashAudio = new Audio('/cyber-city/crash.mp3')
+crashAudio.volume = 0.25
 const gameOverAudio = new Audio('/cyber-city/gameover.mp3')
 
 function playAudio(audio) {
@@ -65,39 +66,37 @@ function startBackgroundMusic() {
   }
 }
 
+function stopBackgroundMusic() {
+  bgMusic.pause()
+  bgMusic.currentTime = 0
+}
 function playRingSound() {
   playAudio(ringAudio)
 }
 
 function playCrashSound() {
+stopBackgroundMusic()
   playAudio(crashAudio)
 }
 
 function playGameOverSound() {
+stopBackgroundMusic()
   playAudio(gameOverAudio)
 }
 const gameOverScreen = document.createElement('div')
 gameOverScreen.id = 'game-over'
 gameOverScreen.innerHTML = `
-  <h1>GAME OVER</h1>
-  <img src="./utkarshh.jpg" alt="Utkarsh">
-  <p>You crashed into an obstacle!</p>
+  <h1>🌆 NOTHING TO LOOSE:) </h1>
+  <img src="./utkarsh.jpg" alt="Utkarsh" class="winner-photo">
+  <p id="end-reason">ATLEAST YOU TRIED</p>
+  <h2 id="final-score">SCORE: 0</h2>
+  <p id="final-rings">RINGS COLLECTED: 0</p>
+  <p id="best-score">PERSONAL BEST: 0</p>
   <button id="restart-btn">PLAY AGAIN</button>
 `
 document.body.appendChild(gameOverScreen)
 
-const citySafeScreen = document.createElement('div')
-citySafeScreen.id = 'city-safe'
-citySafeScreen.innerHTML = `
-  <h1>🌆 CITY RESTORED!</h1>
-  <img src="./utkarsh.jpg" alt="Utkarsh" class="winner-photo">
-  <p>MISSION COMPLETE</p>
-  <p>All 8 energy rings collected.</p>
-  <button id="city-restart-btn">PLAY AGAIN</button>
-`
-document.body.appendChild(citySafeScreen)
-
-document.getElementById('city-restart-btn').addEventListener('click', () => {
+document.getElementById('restart-btn').addEventListener('click', () => {
   location.reload()
 })
 
@@ -137,7 +136,7 @@ scene.add(blueGlow)
 
 
 const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(200, 200),
+  new THREE.PlaneGeometry(200, 2200),
   new THREE.MeshStandardMaterial({ color: 0x101326, roughness: 0.85 })
 )
 ground.rotation.x = -Math.PI / 2
@@ -146,11 +145,11 @@ scene.add(ground)
 
 // Neon road
 const road = new THREE.Mesh(
-  new THREE.PlaneGeometry(12, 180),
+  new THREE.PlaneGeometry(12, 2200),
   new THREE.MeshStandardMaterial({ color: 0x090c19, roughness: 0.7 })
 )
 road.rotation.x = -Math.PI / 2
-road.position.set(0, 0, -65)
+road.position.set(0, 0, -1090)
 scene.add(road)
 
  // Neon road lighting strips
@@ -165,10 +164,10 @@ const pinkRoadMaterial = new THREE.MeshBasicMaterial({
 // Bright strips along the road
 for (const x of [-5.5, 5.5]) {
   const strip = new THREE.Mesh(
-    new THREE.BoxGeometry(0.12, 0.035, 180),
+    new THREE.BoxGeometry(0.12, 0.035, 2200),
     neonRoadMaterial
   )
-  strip.position.set(x, 0.025, -65)
+  strip.position.set(x, 0.025, -1090)
   scene.add(strip)
 }
 
@@ -183,7 +182,7 @@ for (const x of [-3.8, 3.8]) {
 }
 
 // Glowing cyan lane markers
-for (let z = -145; z < 20; z += 8) {
+for (let z = -2190; z < 20; z += 8) {
   const marker = new THREE.Mesh(
     new THREE.BoxGeometry(0.055, 0.025, 3),
     neonRoadMaterial
@@ -206,7 +205,7 @@ const buildingMaterials = [
   color, metalness: 0.55, roughness: 0.35
 }))
 
-for (let z = -130; z < 25; z += 9) {
+for (let z = -2180; z < 25; z += 9) {
   for (const side of [-1, 1]) {
     const width = 3 + Math.random() * 5
     const height = 7 + Math.random() * 25
@@ -355,24 +354,57 @@ for (let i = 0; i < 5; i++) {
   scene.add(obstacle)
   obstacles.push(obstacle)
 }
-// Collectible neon rings
+// Unlimited collectible ring system
 const rings = []
+
 for (let i = 0; i < 8; i++) {
   const ring = new THREE.Mesh(
     new THREE.TorusGeometry(1, 0.12, 8, 24),
     new THREE.MeshBasicMaterial({ color: 0xff28d7 })
   )
-  ring.position.set((Math.random() - 0.5) * 5, 1.8, -8 - i * 13)
+
+  ring.position.set(
+    (Math.random() - 0.5) * 5,
+    1.8,
+    -8 - i * 13
+  )
+
   scene.add(ring)
   rings.push(ring)
 }
 
-const keys = {}
+// Game stats
 let score = 0
+let ringsCollected = 0
 let gameover = false
+let timeLeft = 90
+
+let bestScore = Number(
+  localStorage.getItem('cyberCityBestScore') || 0
+)
+
+function finishRun(reason) {
+  if (gameover) return
+
+  gameover = true
+
+  if (score > bestScore) {
+    bestScore = score
+    localStorage.setItem('cyberCityBestScore', bestScore)
+  }
+
+  document.getElementById('end-reason').textContent = reason
+  document.getElementById('final-score').textContent = `SCORE: ${score}`
+  document.getElementById('final-rings').textContent =
+    `RINGS COLLECTED: ${ringsCollected}`
+  document.getElementById('best-score').textContent =
+    `PERSONAL BEST: ${bestScore}`
+
+  gameOverScreen.style.display = 'flex'
+}
+const keys = {}
 window.addEventListener('keydown', e => {
   keys[e.key.toLowerCase()] = true
-  startBackgroundMusic()
   if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
     e.preventDefault()
   }
@@ -452,6 +484,7 @@ if (!gameover) {
 
     if (playerBox.intersectsBox(obstacleBox)) {
       gameover = true
+      playCrashSound()
       gameOverScreen.style.display = 'flex'
     }
   })
@@ -483,32 +516,36 @@ if (gameover) {
   if (keys['s'] || keys['arrowdown']) player.position.z += speed
 
   player.position.x = THREE.MathUtils.clamp(player.position.x, -4.5, 4.5)
-  player.position.z = THREE.MathUtils.clamp(player.position.z, -120, 8)
+  player.position.z = THREE.MathUtils.clamp(player.position.z, -2100, 8)
 
   camera.position.lerp(
     new THREE.Vector3(player.position.x * 0.4, 5, player.position.z + 9),
     0.08
   )
   camera.lookAt(player.position.x, 1, player.position.z - 5)
-  rings.forEach((ring, i) => {
-    ring.rotation.z += dt
-    ring.rotation.y += dt * 1.5
-    if (ring.visible && player.position.distanceTo(ring.position) < 3.0) {
-      ring.visible = false
-      playRingSound()
-      score++
-      document.getElementById('score').textContent = `ENERGY: ${score} / 8`
-      
-if (score === 8) {
-  document.getElementById('score').textContent = 'CITY RESTORED! 🎉'
-  playCrashSound()
-  gameover = true
-  playVictorySound()
-  citySafeScreen.style.display = 'flex'
-}
+  rings.forEach(ring => {
+  ring.rotation.z += dt
+  ring.rotation.y += dt * 1.5
 
-    }
-  })
+  if (ring.visible && player.position.distanceTo(ring.position) < 3.0) {
+    playRingSound()
+
+    score += 100
+    ringsCollected++
+
+    document.getElementById('score').textContent =
+      `SCORE: ${score} | RINGS: ${ringsCollected}`
+
+    // Respawn collected ring further ahead
+    const farthestZ = Math.min(...rings.map(r => r.position.z))
+
+    ring.position.set(
+      (Math.random() - 0.5) * 5,
+      1.8,
+      farthestZ - 13
+    )
+  }
+})
 
  composer.render()
 }
