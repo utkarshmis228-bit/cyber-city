@@ -459,4 +459,20 @@ body > canvas {
   display: block;
   margin: 8px auto;
 }
-
+#timer {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99998;
+  display: block;
+  margin: 0;
+  padding: 10px 24px;
+  color: #00f7ff;
+  background: rgba(3, 12, 28, 0.9);
+  border: 1px solid #00f7ff;
+  border-radius: 12px;
+  font-size: 28px;
+  font-weight: bold;
+  text-shadow: 0 0 12px #00f7ff;
+}

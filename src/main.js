@@ -86,7 +86,7 @@ stopBackgroundMusic()
 const gameOverScreen = document.createElement('div')
 gameOverScreen.id = 'game-over'
 gameOverScreen.innerHTML = `
-  <h1>🌆 NOTHING TO LOOSE:) </h1>
+  <h1>🌆 NOTHING TO WIN:) </h1>
   <img src="./utkarsh.jpg" alt="Utkarsh" class="winner-photo">
   <p id="end-reason">ATLEAST YOU TRIED</p>
   <h2 id="final-score">SCORE: 0</h2>
@@ -465,7 +465,7 @@ joystick.addEventListener('pointerup', resetJoystick)
 joystick.addEventListener('pointercancel', resetJoystick)
 const hud = document.createElement('div')
 hud.id = 'hud'
-hud.innerHTML = '<b>CYBER CITY</b><span>NEON RUNNER</span><p>WASD / ARROWS — MOVE</p><p id="score">ENERGY: 0 / 8</p>'
+hud.innerHTML = '<b>CYBER CITY</b><span>NEON RUNNER</span><p>WASD / ARROWS — MOVE</p><h2 id="timer">TIME: 90</h2><p id="score">ENERGY: 0 / 8</p>'
 document.body.appendChild(hud)
 
 const clock = new THREE.Clock()
@@ -474,6 +474,18 @@ function animate() {
   requestAnimationFrame(animate)
   const dt = Math.min(clock.getDelta(), 0.05)
   const speed = 10 * dt
+  if (!gameover) {
+  timeLeft -= dt
+
+  const timerDisplay = document.getElementById('timer')
+  timerDisplay.textContent = `TIME: ${Math.max(0, Math.ceil(timeLeft))}`
+  if (timeLeft <= 0) {
+  timeLeft = 0
+  gameover = true
+  playGameOverSound()
+  gameOverScreen.style.display = 'flex'
+}
+}
 
 if (!gameover) {
   obstacles.forEach(obstacle => {
